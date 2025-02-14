@@ -5,7 +5,43 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
+    const handleResponse = async (response) => {
+      // get content reference
+      const content = document.querySelector('#content');
+      let resObj = await response.json();
 
+      console.log(resObj.message);
+      content.innerHTML = `<p>message: ${resObj.message}</p>`;
+    };
+
+    const sendFetch = async (/*url, type*/) => {
+      const pageSelect = document.querySelector("#page");
+      const typeSelect = document.querySelector("#type");
+      const url = pageSelect.value;
+      const type = typeSelect.value;
+      console.log(url);
+
+      // configure request options
+      const options = {
+        method: 'GET',
+        headers: {'Accept': type},
+      }
+      // call fetch, store promise
+      let fetchProm = fetch(url, options);
+      // wait for promise fulfill, handle response
+      fetchProm.then(response => handleResponse(response) );
+    };
+
+    const init = () => {
+      // set input element references
+      const sendButton = document.querySelector("#send");
+      //const pageSelect = document.querySelector("#page");
+      //const typeSelect = document.querySelector("#type");
+      // set click event for send button  (anonymous function to pass parameters)
+      //sendButton.addEventListener('click', () => sendFetch(pageSelect.value,typeSelect.value));
+      sendButton.addEventListener('click', sendFetch);
+    };
+    window.onload = init;
   </script>
 </head>
 <body>
