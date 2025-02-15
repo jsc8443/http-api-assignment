@@ -1,7 +1,3 @@
-// const fs = require('fs');
-// pull in the file system module
-// const index = fs.readFileSync(`${__dirname}/../client/client.html`);
-
 const respond = (request, response, status, content, type) => {
   response.writeHead(status, {
     'Content-Type': type,
@@ -51,6 +47,7 @@ const badRequest = (request, response) => {
     message: 'This request has the required parameters',
   };
 
+  // check parameters
   if (!request.query.valid || request.query.valid !== 'true') {
     responseJSON.message = 'Missing valid query parameter set to true';
     responseJSON.id = 'badRequest';
@@ -63,6 +60,7 @@ const unauthorized = (request, response) => {
     message: 'You have successfully viewed the content.',
   };
 
+  // check parameters
   if (!request.query.loggedIn || request.query.loggedIn !== 'yes') {
     responseJSON.message = 'Missing loggedIn query parameter set to yes';
     responseJSON.id = 'unauthorized';

@@ -1,7 +1,6 @@
 const http = require('http');
 const responseHandler = require('./responses.js');
 const htmlHandler = require('./htmlResponses.js');
-// const jsonHandler = require('./jsonResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -19,17 +18,6 @@ const urlStruct = {
 };
 
 const onRequest = (request, response) => {
-  /* switch (request.url) {
-    case '/':
-      responseHandler.getIndex(request, response);
-      break;
-    case '/success':
-
-      break;
-    default:
-      responseHandler.getIndex(request, response);
-      break;
-  } */
   // parse url using built-in URL class
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
