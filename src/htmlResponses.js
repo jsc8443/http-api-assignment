@@ -1,6 +1,7 @@
 const fs = require('fs'); // pull in the file system module
 
 const index = fs.readFileSync(`${__dirname}/../client/client.html`);
+const style = fs.readFileSync(`${__dirname}/../client/style.css`);
 
 /* const getIndex = (request, response) => {
   // set status code (200), content type, content length
@@ -21,7 +22,7 @@ const respond = (request, response, content, type) => {
   response.end();
 };
 
-const getCodes = (request, response) => {
+/* const getCodes = (request, response) => {
   const xyz = {
     code: '999',
     message: 'placeholder text placeholder text',
@@ -29,16 +30,18 @@ const getCodes = (request, response) => {
 
   const codeString = JSON.stringify(xyz);
   return respond(request, response, codeString, 'application/json');
-};
-
-const 
+}; */
 
 const getIndex = (request, response) => {
   respond(request, response, index, 'text/html');
+  // respond(request, response, style, 'text/css');
+};
+const getStyle = (request, response) => {
+  respond(request, response, style, 'text/css');
 };
 
 // export function(s)
 module.exports = {
   getIndex,
-  getCodes,
+  getStyle,
 };

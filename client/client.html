@@ -6,21 +6,53 @@
   
   <script>
     const handleResponse = async (response) => {
-      // get content reference
-      const content = document.querySelector('#content');
-      let resObj = await response.json();
+      response.text().then((resText) => {
+        console.log(resText);
+        const contentType = response.headers.get('Content-Type'); // get content type
+        const content = document.querySelector('#content'); // content element reference
 
-      console.log(resObj.message);
-      content.innerHTML = `<p>message: ${resObj.message}</p>`;
+        // create elements to hold text and to display on page
+        const h1 = document.createElement('h1');
+        const p = document.createElement('p');
+
+        if (contentType === 'application/json') {
+          const parsedResponse = JSON.parse(resText);  // parse json back into a js object
+          p.textContent = parsedResponse.message;
+        } else if (contentType === 'text/xml') {
+          const parsedResponse = new window.DOMParser().parseFromString(resText, 'text/xml');
+          p.textContent = parsedResponse.querySelector('message').textContent;
+        }
+        switch (response.status) {
+          case 200:
+            h1.innerHTML = '<h1>Success</h1>';
+            break;
+          case 400:
+            h1.innerHTML = '<h1>Bad Request</h1>';
+            break;
+          case 401:
+            h1.innerHTML = '<h1>Unauthorized</h1>';
+            break;
+          case 403:
+            h1.innerHTML = '<h1>Forbidden</h1>';
+            break;
+          case 500:
+            h1.innerHTML = '<h1>Internal Server Error</h1>';
+            break;
+          case 501:
+            h1.innerHTML = '<h1>Not Implemented</h1>';
+            break;
+          default:
+            h1.innerHTML = '<h1>Not Found</h1>';
+            break;
+        }
+        // clear content, add new elements
+        content.innerHTML = "";
+        content.appendChild(h1);
+        content.appendChild(p);
+      });
     };
 
-    const sendFetch = async (/*url, type*/) => {
-      const pageSelect = document.querySelector("#page");
-      const typeSelect = document.querySelector("#type");
-      const url = pageSelect.value;
-      const type = typeSelect.value;
-      console.log(url);
-
+    const sendFetch = async (url, type) => {
       // configure request options
       const options = {
         method: 'GET',
@@ -29,17 +61,17 @@
       // call fetch, store promise
       let fetchProm = fetch(url, options);
       // wait for promise fulfill, handle response
-      fetchProm.then(response => handleResponse(response) );
+      fetchProm.then(response => handleResponse(response));
     };
 
     const init = () => {
       // set input element references
       const sendButton = document.querySelector("#send");
-      //const pageSelect = document.querySelector("#page");
-      //const typeSelect = document.querySelector("#type");
+      const pageSelect = document.querySelector("#page");
+      const typeSelect = document.querySelector("#type");
       // set click event for send button  (anonymous function to pass parameters)
-      //sendButton.addEventListener('click', () => sendFetch(pageSelect.value,typeSelect.value));
-      sendButton.addEventListener('click', sendFetch);
+      sendButton.addEventListener('click', () => sendFetch(pageSelect.value,typeSelect.value));
+      //sendButton.addEventListener('click', sendFetch);
     };
     window.onload = init;
   </script>

@@ -1,20 +1,24 @@
 const http = require('http');
-const responseHandler = require('./htmlResponses.js');
+const responseHandler = require('./responses.js');
+const htmlHandler = require('./htmlResponses.js');
 // const jsonHandler = require('./jsonResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
-  '/': responseHandler.getIndex,
-  '/success': responseHandler.getCodes,
-  '/badRequest': responseHandler.getCodes,
-  '/unauthorized': responseHandler.getCodes,
-  index: responseHandler.getIndex,
+  '/': htmlHandler.getIndex,
+  '/success': responseHandler.success,
+  '/badRequest': responseHandler.badRequest,
+  '/unauthorized': responseHandler.unauthorized,
+  '/forbidden': responseHandler.forbidden,
+  '/internal': responseHandler.internal,
+  '/notImplemented': responseHandler.notImplemented,
+  notFound: responseHandler.notFound,
+  index: htmlHandler.getIndex,
+  '/style.css': htmlHandler.getStyle,
 };
 
 const onRequest = (request, response) => {
-  console.log(request.url);
-
   /* switch (request.url) {
     case '/':
       responseHandler.getIndex(request, response);
@@ -29,12 +33,13 @@ const onRequest = (request, response) => {
   // parse url using built-in URL class
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
-  request.acceptedTypes = request.headers.accept.split(',');
+  request.type = request.headers.accept.split(',');
+  request.query = Object.fromEntries(parsedUrl.searchParams);
 
   if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response);
   } else {
-    urlStruct.index(request, response);
+    urlStruct.notFound(request, response);
   }
 };
 
